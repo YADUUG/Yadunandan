@@ -1,0 +1,160 @@
+def function(count):
+    tests = [ 0]*10
+    for i in range (len(count)):
+        tests[i]=count[i]
+        print(tests)
+   
+count='hajkhdssjahdjahsdjkah'
+function(count)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#Python program to show SHA256
+
+import hashlib 
+import os
+
+
+user_db = {}
+
+def register_user(username, password) :
+
+    salt = os.urandom(16)
+
+    password_hash = hashlib.sha256(salt + password.encode ('utf-8')). hexdigest()
+
+    user_db[username] = (salt, password_hash)
+    print(f"User '{username}' registered successfully.")
+    print(password_hash)
+       
+def login_user(username, password):
+
+    if username in user_db:
+        salt, password_hash = user_db[username]
+
+        input_password_hash = hashlib.sha256(salt + password.encode('utf-8')).hexdigest()
+        print(input_password_hash)
+        if input_password_hash == password_hash:
+            print (f"User '{username}' logged in successfully.")
+        else:
+            print("Invalid password.")
+    else:
+        print("User not found.")
+
+
+if __name__ == "__main__":
+
+    register_user("GUPTA UNCLE", "secure password")
+
+    login_user("GUPTA UNCLE", "secure password")
+
+    login_user("GUPTA UNCLE","wrong_password")
+
+    login_user("non_existent_user","some_password")
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+#Python script that demonstrates SQL injection vulnerability and 
+# how to protect against it using parameterized queries with SQLite
+import sqlite3
+conn=sqlite3.connect(':memory:')
+c=conn.cursor()
+c.execute ('''CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT)''')
+c.execute ("INSERT INTO users(name)VALUES('RAJ')")
+c.execute ("INSERT INTO users(name)VALUES('RAM')")
+c.execute ("INSERT INTO users(name)VALUES('VASU')")
+conn.commit
+print("The 'users' table has been created with the following data:")
+c.execute("SELECT*FROM users")
+results=c.fetchall()
+for row in results:
+    print(row)
+print ()
+user_input ="RAJ' OR 1=1--"
+c.execute("SELECT *FROM users WHERE name='"+user_input+"'")
+print("Vulnerable SQL query results:")
+results=c.fetchall()
+for row in results:
+    print(row)
+print()
+user_input="RAJ' OR1=1--"
+c.execute("SELECT*FROM users WHERE name=?",(user_input,))
+print("Secure SQL query results using parameterized query:")
+results=c.fetchall()
+for row in results:
+    print(row)
+print()
+conn.close()
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+#Simple User Registration and Login
+# Dictionary to store user data (for simplicity)
+user_data ={}
+def register (username, password):
+ if username not in user_data:
+    user_data[username] = password
+    return True
+ return False
+def login (username, password):
+ if username in user_data and user_data[username]==password:
+    return True
+ return False
+# User Registration
+def user_registration() :
+ print ("User Registration")
+ username = input("Enter username: ")
+ password = input ("Enter password: ")
+ if register (username, password):
+    print( "Registration successful!")
+ else:
+    print ("Username already exists. Please choose a different username.")
+# User Login
+def user_login():
+ print ("User Login")
+ username = input("Enter username: ")
+ password = input("Enter password: ")
+
+ if login (username, password):
+    print ("Login successful!")
+ else:
+    print("Invalid username or password. Please try again.")
+# Main menu
+while True:
+ print ("\nMain Menu")
+ print ("1. Register")
+ print ("2. Login")
+ print ("3. Quit")
+
+ choice = input ("Enter your choice (1/2/3): ")
+ if choice =='1':
+    user_registration()
+ elif choice == '2':
+    user_login()
+ elif choice == '3':
+     print ("Goodbye!")
+ 
+else:
+    print ("Invalid choice. Please select 1, 2, or 3.")
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# How to use the cryptography.fernet module in Python to 
+# encrypt and decrypt data.
+
+from cryptography.fernet import Fernet
+
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
+def encrypt_data(data):
+ return cipher_suite.encrypt(data.encode())
+def decrypt_data(encrypted_data):
+ return cipher_suite.decrypt(encrypted_data).decode()
+sensitive_data = "Patient ID:12345, Name: VASU, Diagnosis: CODEBUG"
+encrypted = encrypt_data(sensitive_data)
+print("Encrypted data:", encrypted)
+decrypted = decrypt_data(encrypted)
+print("Decrypted data:", decrypted)
