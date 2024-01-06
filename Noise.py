@@ -1,6 +1,8 @@
 import cv2
 import mediapipe as mp
 import time
+import streamlit as st
+import numpy as np
 
 mp_face = mp.solutions.face_detection
 mp_hands = mp.solutions.hands
@@ -18,6 +20,8 @@ lap_speeds = []
 smooth_factor = 0.5
 prev_ix, prev_iy, prev_nx, prev_ny = 0, 0, 0, 0
 prev_time = time.time()
+
+st.title("Hand and Face Detection with Lap Speed")
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -81,15 +85,17 @@ while cap.isOpened():
 
     # Display lap speed in milliseconds
     if lap_speeds:
-        cv2.putText(frame, f"Lap Speed: {lap_speeds[-1]:.2f} ms", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        st.write(f"Lap Speed: {lap_speeds[-1]:.2f} ms")
 
-    cv2.imshow('Hand and Face Detection', frame)
+    # Display the image in Streamlit
+    st.image(frame, channels="BGR")
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if st.button("Stop"):
         break
 
+# Release the webcam
 cap.release()
 cv2.destroyAllWindows()
 
-average_speed = sum(lap_speeds) / len(lap_speeds) if len(lap_speeds) > 0 else 0
-print(f"Average Speed: {average_speed:.2f} ms per lap")
+average_speed = np.mean(lap_speeds) if len(lap_speeds) > 0 else 0
+st.write(f"Average Speed: {average_speed:.2f} ms per lap")
